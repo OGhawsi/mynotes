@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "129497944831",
+    "project_id": "ghawsi-notes",
+    "storage_bucket": "ghawsi-notes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:129497944831:android:60cce46a1849ddbec0f2ca",
+        "android_client_info": {
+          "package_name": "com.example.test_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLJ0tfS7KCYnaxl-OCoaClTFZzzQyKXUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
