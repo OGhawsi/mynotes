@@ -61,8 +61,10 @@ class _LoginViewState extends State<LoginView> {
                 email: email,
                 password: password,
               );
-              // ignore: avoid_print
-              print(userCredential);
+              if (userCredential != null) {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/home', (route) => false);
+              }
             },
             child: const Text('Login'),
           ),
