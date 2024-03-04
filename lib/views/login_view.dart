@@ -1,7 +1,5 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:test_app/firebase_options.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -32,62 +30,50 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
         title: const Text('Login'),
       ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  TextField(
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    keyboardType: TextInputType.emailAddress,
-                    controller: _email,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your email',
-                    ),
-                  ),
-                  TextField(
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your password',
-                    ),
-                    controller: _password,
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final email = _email.text;
-                      final password = _password.text;
-                      final userCredential = await FirebaseAuth.instance
-                          .signInWithEmailAndPassword(
-                        email: email,
-                        password: password,
-                      );
-                      // ignore: avoid_print
-                      print(userCredential);
-                    },
-                    child: const Text('Login'),
-                  ),
-                ],
+      body: Column(
+        children: [
+          TextField(
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            controller: _email,
+            decoration: const InputDecoration(
+              hintText: 'Enter your email',
+            ),
+          ),
+          TextField(
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: 'Enter your password',
+            ),
+            controller: _password,
+          ),
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
+              final userCredential =
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: email,
+                password: password,
               );
-            case ConnectionState.none:
-              return const Text('loading...');
-            case ConnectionState.waiting:
-              return const Text('loading...');
-            case ConnectionState.active:
-              return const Text('loading...');
-            default:
-              return const Text('loading...');
-          }
-        },
+              // ignore: avoid_print
+              print(userCredential);
+            },
+            child: const Text('Login'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/register', (route) => false);
+            },
+            child: const Text('Not registered? Register here'),
+          ),
+        ],
       ),
     );
   }

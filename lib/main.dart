@@ -1,116 +1,55 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:test_app/firebase_options.dart';
 import 'package:test_app/views/login_view.dart';
+import 'package:test_app/views/register_view.dart';
+
+import 'views/verify_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized;
   runApp(
     MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const LoginView(),
-    ),
+        debugShowCheckedModeBanner: false,
+        title: 'Ghawsi Notes',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const HomePage(),
+        routes: {
+          '/login': (context) => const LoginView(),
+          '/register': (context) => const RegisterView(),
+        }),
   );
 }
 
-class RegisterView extends StatefulWidget {
-  const RegisterView({super.key});
-
-  @override
-  State<RegisterView> createState() => _RegisterViewState();
-}
-
-class _RegisterViewState extends State<RegisterView> {
-  late final TextEditingController _email;
-  late final TextEditingController _password;
-
-  @override
-  void initState() {
-    _email = TextEditingController();
-    _password = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _email.dispose();
-    _password.dispose();
-    super.dispose();
-  }
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.amber,
-        title: const Text('Register'),
+    return FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
       ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  TextField(
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    keyboardType: TextInputType.emailAddress,
-                    controller: _email,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your email',
-                    ),
-                  ),
-                  TextField(
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your password',
-                    ),
-                    controller: _password,
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final email = _email.text;
-                      final password = _password.text;
-                      try {
-                        final userCredential = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                          email: email,
-                          password: password,
-                        );
-                      } on FirebaseAuthException catch (e) {
-                        if (e.code == 'user-not-found')
-                          print('user not found');
-                        else if (e.code == 'wrong-password')
-                          print('Wrong password');
-                      }
-
-                      // ignore: avoid_print
-                      // print(userCredential);
-                    },
-                    child: const Text('Register'),
-                  ),
-                ],
-              );
-            case ConnectionState.none:
-              return const Text('loading...');
-            case ConnectionState.waiting:
-              return const Text('loading...');
-            case ConnectionState.active:
-              return const Text('loading...');
-            default:
-              return const Text('loading...');
-          }
-        },
-      ),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null) {
+              if (user.emailVerified) {
+                return const Text('Verified user');
+              } else {
+                return const VerifyEmailView();
+              }
+            } else {
+              return const LoginView();
+            }
+          default:
+            return const CircularProgressIndicator();
+        }
+      },
     );
   }
 }
